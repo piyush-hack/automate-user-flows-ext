@@ -1,0 +1,19 @@
+#tabs {
+    display: flex;
+    cursor: pointer;
+}
+.tab {
+    flex: 1;
+    padding: 10px;
+    text-align: center;
+    background: lightgrey;
+}
+.tab.active {
+    background: grey;
+    color: white;
+}
+.tab-content {
+}
+.tab-content.active {
+    display: block;
+}
