@@ -1,8 +1,6 @@
 import { RecordableEventHandler, ExtScrollDownEvent } from "../../../common";
 import { AppUtils } from "../../app-utils";
 
-
-
 export class ScrollEventHandler extends RecordableEventHandler {
 
     constructor(private isRecording: boolean) {

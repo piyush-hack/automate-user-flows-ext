@@ -1,5 +1,30 @@
 import { MessageSubject } from "../common/chrome-messaging";
 
+
+let heartbeatInterval;
+
+async function runHeartbeat() {
+    // console.log(HeartBeat);
+    await chrome.storage.local.set({ 'last-heartbeat': new Date().getTime() });
+}
+
+/**
+ * Starts the heartbeat interval which keeps the service worker alive. Call
+ * this sparingly when you are doing work which requires persistence, and call
+ * stopHeartbeat once that work is complete.
+ */
+async function startHeartbeat() {
+    // Run the heartbeat once at service worker startup.
+    runHeartbeat().then(() => {
+        // Then again every 20 seconds.
+        heartbeatInterval = setInterval(runHeartbeat, 20 * 1000);
+    });
+}
+
+
+startHeartbeat();
+
+
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request.action === MessageSubject.START_RECORDING) {
         chrome.tabs.query({ active: true, currentWindow: true }, (tabs: any[]) => {

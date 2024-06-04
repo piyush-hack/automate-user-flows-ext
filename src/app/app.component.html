@@ -6,21 +6,40 @@
         </div>
     </div>
 
-    <div id="content-record" class="tab-content" *ngIf="activeTab === tabs.RECORD" >
+    <div id="content-record" class="tab-content" *ngIf="activeTab === tabs.RECORD">
         <button id="startRecording" (click)="startRecording()">Start Recording</button>
         <button id="stopRecording" (click)="stopRecording()">Stop Recording</button>
+
+        <br><br>
+        <button id="stopPlaying" (click)="selectElement()" *ngIf="isRecording">Select element to extract</button>
+        <button id="stopPlaying" (click)="stopElementSelection()" *ngIf="isRecording">Stop element selection</button>
     </div>
 
-    <div id="content-play" class="tab-content" *ngIf="activeTab === tabs.PLAY" >
-        <input type="file" id="importFile" style="display:none;" />
-        <label for="playCount">Run Recording:</label>
-        <input type="number" [(ngModel)]="playCount" id="playCount" min="1" value="1">
-        <label for="playDelay">Delay (ms):</label>
-        <input type="number" [(ngModel)]="playDelay" id="playDelay" min="0" value="0">
-        <button id="playRecording" (click)="playRecording()">Play Recording</button>
-        <button id="stopPlaying" (click)="stopRecordingPlay()">Stop Playing</button>
-        <button id="exportRecording" (click)="exportRecording()">Export Recording</button>
-        <button id="importRecording" (click)="importRecording()">Import Recording</button>
+    <div id="content-play" class="tab-content" *ngIf="activeTab === tabs.PLAY">
+        <div>
+            <input type="file" id="importFile" style="display:none;" (change)="fileChange($event)" />
+        </div>
+        <div>
+            <label for="scroll">Relative scroll</label>
+            <input type="checkbox" (click)="toggleRelativeScroll()" [value]="relativeScroll" [checked]="relativeScroll" >
+        </div>
+        <div>
+            <label for="playCount">Run Recording:</label>
+            <input type="number" [(ngModel)]="playCount" id="playCount" min="1" value="1">
+        </div>
+        <div>
+            <label for="playDelay">Delay (ms):</label>
+            <input type="number" [(ngModel)]="playDelay" id="playDelay" min="0" value="0">
+        </div>
+        <div>
+            <button id="playRecording" (click)="playRecording()" *ngIf="!isPlaying">Play Recording</button>
+            <button id="stopPlaying" (click)="stopRecordingPlay()" *ngIf="isPlaying">Stop Playing</button>
+        </div>
+        <div>
+            <button id="exportRecording" (click)="exportRecording()" *ngIf="interactions?.length">Export
+                Recording</button>
+            <button id="importRecording" (click)="importRecording()">Import Recording</button>
+        </div>
         <button id="exportResult" (click)="exportResult()">Export Result</button>
         <div id="progress">{{progress}}</div>
     </div>

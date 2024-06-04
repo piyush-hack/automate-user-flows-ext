@@ -12,7 +12,7 @@ export class StartRecording implements ExtensionEvent {
         alert("Started recording");
         await AppUtils.saveState(true, [], null);
 
-        const handlers = AppUtils.getAciveEventHandlers();
+        const handlers = AppUtils.getListenEventHandlers();
         handlers.forEach((_ , i) => new handlers[i](true).listen());
 
         sendResponse({ status: 'Success' });

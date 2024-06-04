@@ -2,17 +2,17 @@ import { ChromeMessage } from "../../chrome-messaging";
 import { RecordableEvent, EventType } from "./recordable-event";
 
 export class ExtMouseDownEvent extends RecordableEvent {
-    constructor(public x: number, public y: number , 
+    constructor(public x: number, public y: number,
         timeGap: number = 0
     ) {
-        super(EventType.MOUSE_DOWN , timeGap);
+        super(EventType.MOUSE_DOWN, timeGap);
     }
 
     execute(): void {
     }
 
     static fromJSON(data: any) {
-        return new ExtMouseDownEvent(data.x, data.y , data?.timeGap)
+        return new ExtMouseDownEvent(data?.x, data?.y, data?.timeGap)
     }
 }
 
@@ -23,17 +23,21 @@ export class ExtClickEvent extends RecordableEvent {
         },
         timeGap: number = 0
     ) {
-        super(EventType.CLICK , timeGap);
+        super(EventType.CLICK, timeGap);
     }
 
     execute(sendResponse: (arg: ChromeMessage) => void): void {
-        const downEvent = new MouseEvent('mousedown', {
-            clientX: this.down.x,
-            clientY: this.down.y,
-            bubbles: true,
-            cancelable: true,
-            view: window
-        });
+        let downEvent = null;
+        if (this.down) {
+            downEvent = new MouseEvent('mousedown', {
+                clientX: this.down.x,
+                clientY: this.down.y,
+                bubbles: true,
+                cancelable: true,
+                view: window
+            });
+        }
+
         const upEvent = new MouseEvent('mouseup', {
             clientX: this.up.x,
             clientY: this.up.y,
@@ -55,6 +59,6 @@ export class ExtClickEvent extends RecordableEvent {
     }
 
     static fromJSON(json: any) {
-        return new ExtClickEvent(ExtMouseDownEvent.fromJSON(json?.down), { x: json?.up?.x, y: json?.up?.y } , json?.timeGap)
+        return new ExtClickEvent(ExtMouseDownEvent.fromJSON(json?.down), { x: json?.up?.x, y: json?.up?.y }, json?.timeGap)
     }
 }

@@ -1,5 +1,6 @@
 import { StorageKeys, Storage } from "../common/storage/storage";
 import { ClickEventHandler } from "./events/recordable-events/click.handler";
+import { CustomEventHandler } from "./events/recordable-events/custom.handler";
 import { InputEventHandler } from "./events/recordable-events/input.handler";
 import { KeyPressEventHandler } from "./events/recordable-events/key-press.handler";
 import { ScrollEventHandler } from "./events/recordable-events/scroll.handler";
@@ -43,7 +44,11 @@ export abstract class AppUtils {
         await Storage.setStorage(StorageKeys.LAST_INTERACTION_TIME, currentTime);
     }
 
-    static getAciveEventHandlers() {
+    static getListenEventHandlers() {
         return [ClickEventHandler, InputEventHandler, KeyPressEventHandler, ScrollEventHandler]
+    };
+
+    static getRemoveEventHandlers() {
+        return [ClickEventHandler, InputEventHandler, KeyPressEventHandler, ScrollEventHandler, CustomEventHandler]
     };
 }

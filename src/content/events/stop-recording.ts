@@ -12,7 +12,7 @@ export class StopRecording implements ExtensionEvent {
         const interactions = await Storage.getStorage(StorageKeys.INTERACTIONS);
         sendResponse(interactions);
 
-        const handlers = AppUtils.getAciveEventHandlers();
+        const handlers = AppUtils.getRemoveEventHandlers();
         handlers.forEach((_, i) => new handlers[i](false).remove());
 
         alert("Stopped recording");

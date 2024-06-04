@@ -24,6 +24,7 @@ export class AppComponent implements OnInit, AfterViewChecked {
   progress: string = '';
   activeTab: Tabs = Tabs.RECORD;
   tabs = Tabs
+  relativeScroll: boolean = false;
 
   constructor(
   ) {
@@ -128,28 +129,55 @@ export class AppComponent implements OnInit, AfterViewChecked {
     await this.saveState()
   }
 
+  async fileChange(event: any) {
+    console.log(event);
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        this.interactions = JSON.parse(e.target.result as any);
+        this.progress = 'Recording imported.';
+        this.saveState();
+      };
+      reader.readAsText(file);
+    }
+  }
+
   async startPlayback(playCount = 1, playDelay = 0) {
     this.isPlaying = true;
     console.log("play interactions", this.interactions)
 
     for (let currentPlayCount = 0; currentPlayCount < playCount; currentPlayCount++) {
+      await ChromeMessaging.sendMsgToActiveTab(new ChromeMessage(MessageSource.POPUP, MessageSubject.START_INTERACTION_PERFORMING, null));
+
       for (const interaction of this.interactions) {
         try {
           await new Promise((resolve) => setTimeout(resolve, interaction.timeGap));
           const response = await ChromeMessaging.sendMsgToActiveTab(new ChromeMessage(MessageSource.POPUP, MessageSubject.PLAY_INTERACTION, interaction))
-          this.progress = `Step ${this.currentStep + 1}: ${response.status}`;
+          console.log(response);
+          this.progress = `Step ${this.currentStep + 1}: ${response?.status}`;
         } catch (error) {
           console.log(error);
         }
         this.currentStep++;
+        console.log("info", this.isPlaying, this.currentStep, playCount);
+        if (!this.isPlaying) {
+          break;
+        }
       }
-      currentPlayCount++;
       if (currentPlayCount < playCount) {
         await new Promise((resolve) => setTimeout(resolve, playDelay));
       }
+      if (!this.isPlaying) {
+        break;
+      }
+    }
+    if (!this.isPlaying) {
+      this.progress = 'Playback stopped';
+    } else {
+      this.progress = 'Playback completed.';
     }
     this.isPlaying = false;
-    this.progress = 'Playback completed.';
   }
 
   async stopRecordingPlay() {
@@ -158,16 +186,32 @@ export class AppComponent implements OnInit, AfterViewChecked {
     await this.saveState()
   }
 
+  async toggleRelativeScroll() {
+    this.relativeScroll = !this.relativeScroll
+    await this.saveState();
+  }
+
+  async selectElement() {
+    await ChromeMessaging.sendMsgToActiveTab(new ChromeMessage(MessageSource.POPUP, MessageSubject.EXTARCT_ELEMENT, null))
+  }
+
+  async stopElementSelection() {
+    await ChromeMessaging.sendMsgToActiveTab(new ChromeMessage(MessageSource.POPUP, MessageSubject.STOP_ELEMENT_EXTRACTION, null))
+  }
+
   async saveState() {
+    console.log("this.relativeScroll", this.relativeScroll)
     await Storage.setStorage(StorageKeys.INTERACTIONS, this.interactions);
     await Storage.setStorage(StorageKeys.IS_RECORDING, this.isRecording);
     await Storage.setStorage(StorageKeys.IS_PLAYING, this.isPlaying);
+    await Storage.setStorage(StorageKeys.RELATIVE_SCROLL, this.relativeScroll);
   }
 
   async loadState() {
     this.interactions = await Storage.getStorage(StorageKeys.INTERACTIONS);
     this.isRecording = await Storage.getStorage(StorageKeys.IS_RECORDING);
     this.isPlaying = await Storage.getStorage(StorageKeys.IS_PLAYING);
+    this.relativeScroll = await Storage.getStorage(StorageKeys.RELATIVE_SCROLL)
   }
 
   clear() {
