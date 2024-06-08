@@ -6,6 +6,7 @@ import { PerformInteractions } from "./events/perform-interactions";
 import { ElementRecorder } from "./events/element-recorder";
 import { StopRecording } from "./events/stop-recording";
 import { InteractionStarter } from "./events/interaction-starter";
+import { CONTENT_CSS } from "./content.css";
 
 export class Content {
 
@@ -18,6 +19,7 @@ export class Content {
         this.events.set(MessageSubject.PLAY_INTERACTION, new PerformInteractions());
         this.events.set(MessageSubject.EXTARCT_ELEMENT, new ElementRecorder(true));
         this.events.set(MessageSubject.STOP_ELEMENT_EXTRACTION, new ElementRecorder(false));
+        this.injectCSS();
         chrome.runtime.onMessage.addListener(this.msgListener.bind(this));
     }
 
@@ -29,6 +31,14 @@ export class Content {
     private msgListener(message: ChromeMessage, sender: chrome.runtime.MessageSender, sendResponse: (response?: any) => void) {
         this.events.get(message.subject)?.init(ModelUtils.fromJSON(message.data), sendResponse.bind(this))
         return true;
+    }
+
+    
+    private injectCSS() {
+        let styleElement = document.createElement("style");
+        styleElement.type = "text/css";
+        styleElement.appendChild(document.createTextNode(CONTENT_CSS));
+        (document.head || document.documentElement).appendChild(styleElement);
     }
 
 }
