@@ -7,6 +7,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ServicesModule } from '../services/services.module';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { AppCommonModule } from './app-common/app-common.module';
 
 
 export function onAppInit(): () => Promise<any> {
@@ -29,6 +30,7 @@ export function onAppInit(): () => Promise<any> {
     AppRoutingModule,
     ServicesModule.forRoot(),
     BrowserAnimationsModule,
+    AppCommonModule
   ],
   providers: [
     {

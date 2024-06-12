@@ -11,11 +11,11 @@ export enum EventType {
 }
 
 export abstract class RecordableEvent extends Model {
-    constructor(protected type: EventType, protected timeGap: number) {
+    constructor(public type: EventType, public timeGap: number) {
         super(ModelType.RECORDABLE_EVENT);
     }
 
-    abstract execute(sendResponse: (arg: ChromeMessage) => void): void;
+    abstract execute(sendResponse: (arg: ChromeMessage) => void): Promise<void>;
 }
 export abstract class RecordableEventHandler {
     abstract listen(): void

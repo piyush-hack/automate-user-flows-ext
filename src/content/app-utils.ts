@@ -35,10 +35,12 @@ export abstract class AppUtils {
 
     static async saveInteraction(interaction: any) {
         const interactions = await Storage.getStorage(StorageKeys.INTERACTIONS);
-        const lastInteractionTime = await Storage.getStorage(StorageKeys.LAST_INTERACTION_TIME);
         const currentTime = new Date().getTime();
-        const timeGap = lastInteractionTime ? currentTime - lastInteractionTime : 0;
-        interaction.timeGap = timeGap;
+        if (!interaction.timeGap) {
+            const lastInteractionTime = await Storage.getStorage(StorageKeys.LAST_INTERACTION_TIME);
+            const timeGap = lastInteractionTime ? currentTime - lastInteractionTime : 0;
+            interaction.timeGap = timeGap;
+        }
         ((interactions && Array.isArray(interactions)) ? interactions : []).push(interaction);
         await Storage.setStorage(StorageKeys.INTERACTIONS, interactions);
         await Storage.setStorage(StorageKeys.LAST_INTERACTION_TIME, currentTime);

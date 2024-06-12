@@ -19,7 +19,7 @@ export class ExtKeyPressEvent extends RecordableEvent {
         super(EventType.KEY_PRESS , timeGap);
     }
     
-    execute(sendResponse: (arg: ChromeMessage) => void): void {
+    async execute(sendResponse: (arg: ChromeMessage) => void) {
         const elements = document.querySelectorAll(this.targetSelector);
         const element = elements.length === 1 ? elements[0] : document.activeElement;
         if (element) {

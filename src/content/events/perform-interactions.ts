@@ -6,7 +6,7 @@ export class PerformInteractions implements ExtensionEvent {
     }
 
     async init(interaction: RecordableEvent, sendResponse: (arg: any) => void) {
-        interaction.execute(sendResponse.bind(this));
+        await interaction.execute(sendResponse.bind(this));
         sendResponse({status : "Success"});
     }
 }

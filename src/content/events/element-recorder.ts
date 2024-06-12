@@ -9,9 +9,9 @@ export class ElementRecorder implements ExtensionEvent {
     async init(data: any, sendResponse: (arg: any) => void) {
         const handlers = [CustomEventHandler];
         if (this.listen) {
-            handlers.forEach((_, i) => new handlers[i]().listen());
+            await (new CustomEventHandler()).listen();
         } else {
-            handlers.forEach((_, i) => new handlers[i]().remove());
+            (new CustomEventHandler()).remove();
         }
         sendResponse({ status: 'Success' });
     }

@@ -1,23 +1,23 @@
 import { ChromeMessage, MessageSource, MessageSubject } from "../../chrome-messaging";
-import { StorageKeys } from "../../storage/storage";
+import { Storage, StorageKeys } from "../../storage/storage";
 import { EventType, RecordableEvent } from "./recordable-event";
 
 export class ExtCustomEvent extends RecordableEvent {
-    constructor(private selector: any, private need: any, private value: any , 
+    constructor(private selector: any, private need: any, private value: any,
         timeGap: number = 0
     ) {
-        super(EventType.CUSTOM , timeGap)
+        super(EventType.CUSTOM, timeGap)
     }
 
-    execute(sendResponse: (arg: ChromeMessage) => void): void {
+    async execute(sendResponse: (arg: ChromeMessage) => void) {
         try {
             const response = this.extractOrTriggerEvent(this.selector, this.need, this.value);
             if (response) {
-                chrome.storage.local.get([StorageKeys.CALC_DATA]).then(res => {
-                    const value = (res?.[StorageKeys.CALC_DATA] && Array.isArray(res?.[StorageKeys.CALC_DATA])) ? res?.[StorageKeys.CALC_DATA] : [];
-                    value?.push(response);
-                    chrome.storage.local.set({ [StorageKeys.CALC_DATA]: value });
-                });
+
+                const calcData = await Storage.getStorage(StorageKeys.CALC_DATA);
+                const value = (calcData && Array.isArray(calcData)) ? calcData : [];
+                value?.push(response);
+                await Storage.setStorage(StorageKeys.CALC_DATA , value);
             }
             sendResponse(new ChromeMessage(MessageSource.CONTENT, MessageSubject.SUCCESS, null));
         } catch (error: any) {
@@ -27,7 +27,7 @@ export class ExtCustomEvent extends RecordableEvent {
 
 
     static fromJSON(json: any) {
-        return new ExtCustomEvent(json?.selector, json?.need, json?.value , json?.timeGap)
+        return new ExtCustomEvent(json?.selector, json?.need, json?.value, json?.timeGap)
     }
 
 

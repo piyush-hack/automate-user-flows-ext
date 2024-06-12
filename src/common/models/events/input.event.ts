@@ -7,7 +7,7 @@ export class ExtInputEvent extends RecordableEvent {
     ) {
         super(EventType.INPUT , timeGap);
     }
-    execute(sendResponse: (arg: ChromeMessage) => void): void {
+    async execute(sendResponse: (arg: ChromeMessage) => void) {
         const elements = document.querySelectorAll(this.elementSelector);
         const element = elements.length === 1 ? elements[0] : document.activeElement;
         if (!element.isContentEditable) {

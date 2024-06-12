@@ -8,7 +8,7 @@ export class ExtMouseDownEvent extends RecordableEvent {
         super(EventType.MOUSE_DOWN, timeGap);
     }
 
-    execute(): void {
+    async execute() {
     }
 
     static fromJSON(data: any) {
@@ -26,7 +26,7 @@ export class ExtClickEvent extends RecordableEvent {
         super(EventType.CLICK, timeGap);
     }
 
-    execute(sendResponse: (arg: ChromeMessage) => void): void {
+    async execute(sendResponse: (arg: ChromeMessage) => void) {
         let downEvent = null;
         if (this.down) {
             downEvent = new MouseEvent('mousedown', {

@@ -14,8 +14,10 @@ export class CustomEventHandler extends RecordableEventHandler {
         this.saveRelatedEl = this.saveRelatedElement.bind(this);
     }
 
-    listen() {
+    async listen() {
         alert("hover and click over element to choose for extraction");
+        const interaction = new ExtCustomEvent(null, 'wait', null);
+        await AppUtils.saveInteraction(interaction);
 
         document.addEventListener("mouseover", this.showRelatedEl);
         document.addEventListener("mouseout", this.hideRelatedEl);
@@ -23,7 +25,7 @@ export class CustomEventHandler extends RecordableEventHandler {
     }
 
     async saveRelatedElement() {
-        const interaction = new ExtCustomEvent(this.selectedElement, 'text', null);
+        const interaction = new ExtCustomEvent(this.selectedElement, 'text', null , 1);
         this.resetElementChanges();
         await AppUtils.saveInteraction(interaction);
         alert("Saved element")
