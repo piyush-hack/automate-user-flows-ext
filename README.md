@@ -26,11 +26,8 @@ and voila you got your extension
 ### Upcoming
 
 - Import a json via a link (maybe s3) such that it creates a new page to interact with that interaction json , so that can release as a seperate extension.
-
-### Upcoming
-
-- Import a json via a link (maybe s3) such that it creates a new page to interact with that interaction json , so that can release as a seperate extension.
-
+- Improved UI
+- A workslow design for user to interact with json in extension itself
 
 ## License
 
